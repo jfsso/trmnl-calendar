@@ -15,6 +15,10 @@ trmnl_webhook_url = os.getenv('TRMNL_WEBHOOK_URL')
 trmnl_ics_urls = os.getenv('TRMNL_ICS_URL', default='').split(',')
 trmnl_days = int(os.getenv('TRMNL_DAYS', default='30'))
 trmnl_tz = os.getenv('TRMNL_TZ')
+trmnl_date_format = os.getenv('TRMNL_DATE_FORMAT', default='%Y-%m-%d')
+
+now = datetime.datetime.now(pytz.timezone(trmnl_tz))
+start_date = now.date()
 
 merged_calendar = icalendar.Calendar()
 for ics_url in trmnl_ics_urls:
@@ -28,15 +32,12 @@ for ics_url in trmnl_ics_urls:
         if component.name == "VEVENT":
             merged_calendar.add_component(component)
 
-now = datetime.datetime.now(pytz.timezone(trmnl_tz))
-now_date = now.date()
-
 query = recurring_ical_events.of(merged_calendar)
 
 results = []
 
 for i in range(trmnl_days):
-    date = now_date + datetime.timedelta(days=i)
+    date = start_date + datetime.timedelta(days=i)
     events = query.at(date)
     if len(events) == 0:
         continue
@@ -48,7 +49,7 @@ for i in range(trmnl_days):
     events.sort(key=sort_date)
 
     if DEBUG:
-        print(f"--- {date} ---")
+        print(f"--- {date.strftime(trmnl_date_format)} ---")
     for event in events:
         start = event["DTSTART"].dt.strftime("%H:%M") if "DTSTART" in event else "00:00"
         end = event["DTEND"].dt.strftime("%H:%M") if "DTEND" in event else "23:59"
@@ -63,11 +64,11 @@ for i in range(trmnl_days):
                 print(f"{start}-{end} {summary}")
             json_events.append({"summary": summary, "start": start, "end": end})
 
-    results.append({"date": date.strftime("%Y-%m-%d (%a)"), "events": json_events})
+    results.append({"date": date.strftime(trmnl_date_format), "events": json_events})
 
 webhook_body = {
     "merge_variables": {
-        "updated_at": now.strftime("%Y-%m-%d %H:%M"),
+        "updated_at": now.strftime(trmnl_date_format + " %H:%M"),
         "title": trmnl_title,
         "calendar": results
     }
