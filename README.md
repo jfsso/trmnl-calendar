@@ -12,7 +12,7 @@ A TRMNL plugin that fetches an ICS calendar and display events in a multi-column
 ```
 TRMNL_TITLE="<title to display in title bar>"
 TRMNL_WEBHOOK_URL=<your Webhook URL>
-TRMNL_ICS_URL=<your calendar ICS url>
+TRMNL_ICS_URL=<your calendar ICS url(s) seperated by a comma (,)>
 TRMNL_DAYS=30 # number of days to display
 TRMNL_TZ="<your timezone>" # example: America/Los_Angeles
 ```
