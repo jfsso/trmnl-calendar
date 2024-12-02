@@ -16,6 +16,7 @@ TRMNL_ICS_URL=<your calendar ICS url(s) seperated by a comma (,)>
 TRMNL_DAYS=30 # number of days to display
 TRMNL_TZ="<your timezone>" # example: America/Los_Angeles
 TRMNL_DATE_FORMAT=%d.%m.%Y
+TRMNL_NUMBER_COLUMNS=5
 ```
 5. Run `main.py`
 

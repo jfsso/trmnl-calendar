@@ -16,6 +16,7 @@ trmnl_ics_urls = os.getenv('TRMNL_ICS_URL', default='').split(',')
 trmnl_days = int(os.getenv('TRMNL_DAYS', default='30'))
 trmnl_tz = os.getenv('TRMNL_TZ')
 trmnl_date_format = os.getenv('TRMNL_DATE_FORMAT', default='%Y-%m-%d')
+trmnl_number_columns = int(os.getenv('TRMNL_NUMBER_COLUMNS', default='5'))
 
 now = datetime.datetime.now(pytz.timezone(trmnl_tz))
 start_date = now.date()
@@ -70,7 +71,8 @@ webhook_body = {
     "merge_variables": {
         "updated_at": now.strftime(trmnl_date_format + " %H:%M"),
         "title": trmnl_title,
-        "calendar": results
+        "calendar": results,
+        "columns": trmnl_number_columns
     }
 }
 json_string = json.dumps(webhook_body)
