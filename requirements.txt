@@ -1,0 +1,16 @@
+certifi==2024.8.30
+charset-normalizer==3.4.0
+httplib2==0.22.0
+icalendar==5.0.13
+icalevents==0.1.29
+idna==3.10
+pyparsing==3.2.0
+python-dateutil==2.9.0.post0
+python-dotenv==1.0.1
+pytz==2024.2
+recurring-ical-events==3.3.3
+requests==2.32.3
+six==1.16.0
+tzdata==2024.2
+urllib3==2.2.3
+x-wr-timezone==1.0.1

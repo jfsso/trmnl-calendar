@@ -1,0 +1,54 @@
+<link href="https://fonts.googleapis.com/css?family=M+PLUS+Rounded+1c" rel="stylesheet">
+
+<style>
+  .trmnl .label.label--small {
+    font-family: "M PLUS Rounded 1c"; 
+    font-size: 15px;
+  }
+
+  .trmnl .day {
+    flex: 1 1 none;
+    width: 155px;
+    gap: 5px;
+  }
+</style>
+
+<div class="layout" style="justify-content: left;">
+  <div style="height: 420px; display: flex; flex-direction: column; flex-wrap: wrap;">
+
+    {% for day in calendar %}
+    <div class="day">
+      <div class="item">
+        <span class="label label--small label--inverted">{{ day.date }}</span>
+      </div>
+      {% for event in day.events %}
+      {% if event.start %}      
+      <div class="item">
+        <div class="meta"></div>
+        <div class="content">
+          <span class="label label--small">{{ event.summary }}</span>
+          <div class="flex gap--small" style="">
+            <span class="label label--small">{{ event.start }} - {{ event.end }}</span>
+          </div>
+        </div>
+      </div>
+      {% else %}
+      <div class="item">
+        <span class="label label--small label--underline">{{ event.summary }}</span>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    {% endfor %}
+
+  </div>
+
+</div>
+
+
+<div class="title_bar">
+  <img class="image" src="/images/plugins/trmnl--render.svg" />
+  <span class="title">{{ title }}</span>
+  <span class="instance">Last updated: {{ updated_at }}</span>
+</div>
+
