@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 import datetime
 import icalendar
 import json
+import locale
 import os
 import pytz
 import recurring_ical_events
@@ -15,8 +16,14 @@ trmnl_webhook_url = os.getenv('TRMNL_WEBHOOK_URL')
 trmnl_ics_urls = os.getenv('TRMNL_ICS_URL', default='').split(',')
 trmnl_days = int(os.getenv('TRMNL_DAYS', default='30'))
 trmnl_tz = os.getenv('TRMNL_TZ')
-trmnl_date_format = os.getenv('TRMNL_DATE_FORMAT', default='%Y-%m-%d')
+trmnl_date_format = os.getenv('TRMNL_DATE_FORMAT', default='%x (%a)')
+trmnl_time_format = os.getenv('TRMNL_TIME_FORMAT', default='%H:%M')
+trmnl_updated_at_format = os.getenv('TRMNL_UPDATED_AT_FORMAT', default='%x %X')
+trmnl_locale = os.getenv('TRMNL_LOCALE')
 trmnl_number_columns = int(os.getenv('TRMNL_NUMBER_COLUMNS', default='5'))
+
+if trmnl_locale:
+    locale.setlocale(locale.LC_ALL, trmnl_locale)
 
 now = datetime.datetime.now(pytz.timezone(trmnl_tz))
 start_date = now.date()
@@ -29,10 +36,15 @@ for ics_url in trmnl_ics_urls:
     response = requests.get(ics_url)
     response.raise_for_status()
     calendar = icalendar.Calendar.from_ical(response.text)
-    for component in calendar.walk():
-        if component.name == "VEVENT":
-            merged_calendar.add_component(component)
 
+    # this will keep the calendar timezone
+    for name, value in calendar.property_items(recursive=False):
+        merged_calendar.add(name, value)
+
+    for component in calendar.walk('VEVENT'):
+        merged_calendar.add_component(component)
+
+#merged_calendar.add_missing_timezones()
 query = recurring_ical_events.of(merged_calendar)
 
 results = []
@@ -52,8 +64,8 @@ for i in range(trmnl_days):
     if DEBUG:
         print(f"--- {date.strftime(trmnl_date_format)} ---")
     for event in events:
-        start = event["DTSTART"].dt.strftime("%H:%M") if "DTSTART" in event else "00:00"
-        end = event["DTEND"].dt.strftime("%H:%M") if "DTEND" in event else "23:59"
+        start = event["DTSTART"].dt.strftime(trmnl_time_format) if "DTSTART" in event else "00:00"
+        end = event["DTEND"].dt.strftime(trmnl_time_format) if "DTEND" in event else "23:59"
         summary = event.get("SUMMARY", "No Title")
         all_day = isinstance(event["DTSTART"].dt, datetime.date) and not isinstance(event["DTSTART"].dt, datetime.datetime)
         if all_day:
@@ -69,7 +81,7 @@ for i in range(trmnl_days):
 
 webhook_body = {
     "merge_variables": {
-        "updated_at": now.strftime(trmnl_date_format + " %H:%M"),
+        "updated_at": now.strftime(trmnl_updated_at_format),
         "title": trmnl_title,
         "calendar": results,
         "columns": trmnl_number_columns
