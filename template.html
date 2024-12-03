@@ -8,7 +8,7 @@
 
   .trmnl .day {
     flex: 1 1 none;
-    width: 155px;
+    width: calc(800px / {{ columns }});
     gap: 5px;
   }
 </style>
@@ -22,7 +22,7 @@
         <span class="label label--small label--inverted">{{ day.date }}</span>
       </div>
       {% for event in day.events %}
-      {% if event.start %}      
+      {% if event.start %}
       <div class="item">
         <div class="meta"></div>
         <div class="content">
@@ -42,13 +42,10 @@
     {% endfor %}
 
   </div>
-
 </div>
-
 
 <div class="title_bar">
   <img class="image" src="/images/plugins/trmnl--render.svg" />
   <span class="title">{{ title }}</span>
   <span class="instance">Last updated: {{ updated_at }}</span>
 </div>
-
