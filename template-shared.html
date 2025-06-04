@@ -8,14 +8,14 @@
 
   .trmnl .day {
     flex: 1 1 none;
-    width: calc(800px / {{ columns }});
+    width: calc(var(--max-width) / {{ columns }});
     gap: 5px;
   }
 </style>
 
 <div class="layout" style="justify-content: left;">
-  <div style="height: 420px; display: flex; flex-direction: column; flex-wrap: wrap;">
-
+  <div style="height: var(--max-height); display: flex; flex-direction: column; flex-wrap: wrap;">
+    
     {% for day in calendar %}
     <div class="day">
       <div class="item">
